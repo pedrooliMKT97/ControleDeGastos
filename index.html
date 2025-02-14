@@ -6,6 +6,43 @@
     <title>Controle de Gastos</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --background-color: #f5f5f5;
+            --text-color: #333;
+            --card-background: linear-gradient(90deg, #AA002B, #FF0040);
+            --input-background: #fff;
+            --input-border: #ccc;
+            --table-background: #fff;
+            --table-border: #ddd;
+            --th-background: #AA002B;
+        }
+
+        [data-theme="dark"] {
+            --background-color: #1a1a1a;
+            --text-color: #fff;
+            --card-background: linear-gradient(90deg, #2a0d14, #4d0d1c);
+            --input-background: #333;
+            --input-border: #555;
+            --table-background: #2a2a2a;
+            --table-border: #444;
+            --th-background: #4d0d1c;
+        }
+
+        /* Botão de Toggle Theme */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--card-background);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 1001;
+            transition: all 0.3s ease;
+        }
+
         /* Estilos para o vídeo de introdução */
         #introVideo {
             position: fixed;
@@ -27,16 +64,18 @@
         body {
             font-family: 'Montserrat', sans-serif;
             text-align: center;
-            background-color: #f5f5f5;
+            background-color: var(--background-color);
+            color: var(--text-color);
             margin: 0;
             padding: 20px;
+            transition: background-color 0.3s, color 0.3s;
         }
         .container {
             max-width: 400px;
             margin: auto;
         }
         .card {
-            background: linear-gradient(90deg, #AA002B, #FF0040);
+            background: var(--card-background);
             color: white;
             padding: 20px;
             border-radius: 10px;
@@ -63,7 +102,9 @@
         input {
             width: 100%;
             padding: 10px;
-            border: 1px solid #ccc;
+            background: var(--input-background);
+            border: 1px solid var(--input-border);
+            color: var(--text-color);
             border-radius: 5px;
             font-size: 14px;
             margin-bottom: 10px;
@@ -79,7 +120,7 @@
             box-shadow: 0 0 8px rgba(170, 0, 43, 0.1);
         }
         button {
-            background: linear-gradient(90deg, #AA002B, #FF0040);
+            background: var(--card-background);
             color: white;
             border: none;
             padding: 10px 15px;
@@ -98,20 +139,20 @@
             width: 100%;
             margin-top: 20px;
             border-collapse: collapse;
-            background-color: white;
+            background-color: var(--table-background);
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         th, td {
-            border: 1px solid #ddd;
+            border: 1px solid var(--table-border);
             padding: 10px;
             text-align: center;
             font-size: 14px;
             transition: background 0.2s ease;
         }
         tr:hover td {
-            background-color: #fff5f7;
+            background-color: rgba(255, 245, 247, 0.1);
         }
         tr {
             transition: transform 0.2s ease;
@@ -121,7 +162,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         th {
-            background-color: #AA002B;
+            background-color: var(--th-background);
             color: white;
         }
         .actions button {
@@ -176,7 +217,7 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: white;
+            background: var(--input-background);
             overflow: hidden;
             position: relative;
             transition: all 0.3s ease;
@@ -236,6 +277,9 @@
     </style>
 </head>
 <body>
+    <!-- Botão de Toggle Theme -->
+    <button class="theme-toggle" id="themeToggle">🌙</button>
+
     <!-- Vídeo de introdução -->
     <video id="introVideo" autoplay muted>
         <source src="videos/intro.mp4" type="video/mp4">
@@ -303,6 +347,27 @@
     </div>
 
     <script>
+        // Controle do Tema
+        const themeToggle = document.getElementById('themeToggle');
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+            themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+        });
+
+        // Aplicar tema salvo
+        setTheme(savedTheme);
+
+        // Restante do código JavaScript mantido igual...
+        // (O restante do JavaScript permanece o mesmo que o código original)
+
         // Controle do vídeo de introdução
         const introVideo = document.getElementById('introVideo');
         const mainContent = document.getElementById('mainContent');
