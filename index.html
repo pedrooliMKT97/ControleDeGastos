@@ -6,6 +6,24 @@
     <title>Controle de Gastos</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
+        /* Estilos para o vídeo de introdução */
+        #introVideo {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 1000;
+            background-color: black;
+        }
+
+        /* Esconder a página principal inicialmente */
+        #mainContent {
+            display: none;
+        }
+
+        /* Estilos gerais */
         body {
             font-family: 'Montserrat', sans-serif;
             text-align: center;
@@ -218,63 +236,83 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Controle de Gastos</h2>
-        
-        <!-- Avatar Container -->
-        <div class="avatar-container" onclick="document.getElementById('uploadFoto').click()">
-            <div class="avatar-content">
-                <img id="avatarImage" class="avatar">
-                <svg class="avatar-icon" id="defaultIcon" viewBox="0 0 24 24">
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
-                </svg>
-                <div class="avatar-overlay">
-                    Alterar Foto
+    <!-- Vídeo de introdução -->
+    <video id="introVideo" autoplay muted>
+        <source src="videos/intro.mp4" type="video/mp4">
+        <source src="videos/intro.webm" type="video/webm">
+        Seu navegador não suporta vídeos HTML5.
+    </video>
+
+    <!-- Conteúdo principal -->
+    <div id="mainContent">
+        <div class="container">
+            <h2>Controle de Gastos</h2>
+            
+            <!-- Avatar Container -->
+            <div class="avatar-container" onclick="document.getElementById('uploadFoto').click()">
+                <div class="avatar-content">
+                    <img id="avatarImage" class="avatar">
+                    <svg class="avatar-icon" id="defaultIcon" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                    </svg>
+                    <div class="avatar-overlay">
+                        Alterar Foto
+                    </div>
                 </div>
             </div>
-        </div>
-        <input type="file" id="uploadFoto" accept="image/*">
+            <input type="file" id="uploadFoto" accept="image/*">
 
-        <div class="card">
+            <div class="card">
+                <div class="input-group">
+                    <input type="text" id="nomeUsuario" placeholder="Seu Nome" onchange="salvarNome()">
+                </div>
+                <div class="input-group">
+                    <input type="number" id="salario" placeholder="Salário Atual" min="0" onchange="salvarSalario()">
+                </div>
+                <p>Saldo disponível: <strong id="saldo">R$ 0,00</strong></p>
+                <p id="alertaSaldo" class="alerta-saldo">⚠️ Você está com saldo negativo, cuidado!</p>
+            </div>
+            
             <div class="input-group">
-                <input type="text" id="nomeUsuario" placeholder="Seu Nome" onchange="salvarNome()">
+                <input type="text" id="nomeGasto" placeholder="Nome do Gasto">
             </div>
             <div class="input-group">
-                <input type="number" id="salario" placeholder="Salário Atual" min="0" onchange="salvarSalario()">
+                <input type="number" id="valorGasto" placeholder="Valor do Gasto" min="0">
             </div>
-            <p>Saldo disponível: <strong id="saldo">R$ 0,00</strong></p>
-            <p id="alertaSaldo" class="alerta-saldo">⚠️ Você está com saldo negativo, cuidado!</p>
-        </div>
-        
-        <div class="input-group">
-            <input type="text" id="nomeGasto" placeholder="Nome do Gasto">
-        </div>
-        <div class="input-group">
-            <input type="number" id="valorGasto" placeholder="Valor do Gasto" min="0">
-        </div>
-        <div class="input-group">
-            <input type="date" id="dataGasto">
-        </div>
-        <button onclick="adicionarGasto()" id="btnAplicar">Aplicar</button>
-        <button onclick="cancelarEdicao()" id="btnCancelar" style="display: none;">Cancelar</button>
-        
-        <table>
-            <thead>
-                <tr>
-                    <th>Item</th>
-                    <th>Valor</th>
-                    <th>Data</th>
-                    <th>Ação</th>
-                </tr>
-            </thead>
-            <tbody id="tabelaGastos">
-            </tbody>
-        </table>
+            <div class="input-group">
+                <input type="date" id="dataGasto">
+            </div>
+            <button onclick="adicionarGasto()" id="btnAplicar">Aplicar</button>
+            <button onclick="cancelarEdicao()" id="btnCancelar" style="display: none;">Cancelar</button>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Valor</th>
+                        <th>Data</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaGastos">
+                </tbody>
+            </table>
 
-        <button onclick="resetarTudo()">Resetar Tudo</button>
+            <button onclick="resetarTudo()">Resetar Tudo</button>
+        </div>
     </div>
-    
+
     <script>
+        // Controle do vídeo de introdução
+        const introVideo = document.getElementById('introVideo');
+        const mainContent = document.getElementById('mainContent');
+
+        introVideo.addEventListener('ended', () => {
+            introVideo.style.display = 'none';
+            mainContent.style.display = 'block';
+        });
+
+        // Configurações iniciais
         const formatadorMoeda = new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL'
