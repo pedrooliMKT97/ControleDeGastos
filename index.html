@@ -60,24 +60,32 @@
         .card input::placeholder {
             color: rgba(255, 255, 255, 0.7);
         }
-        input {
+        
+        /* Caixas de entrada transparentes para gastos */
+        .input-group input {
+            background: transparent;
+            border: 1px solid rgba(170, 0, 43, 0.3);
+            color: #333;
             width: 100%;
             padding: 10px;
-            border: 1px solid #ccc;
             border-radius: 5px;
             font-size: 14px;
             margin-bottom: 10px;
             transition: all 0.3s ease;
         }
-        input:focus {
+        .input-group input::placeholder {
+            color: rgba(170, 0, 43, 0.5);
+        }
+        .input-group input:focus {
             border-color: #AA002B;
             outline: none;
             box-shadow: 0 0 5px rgba(170, 0, 43, 0.3);
         }
-        input:not(.card input):hover {
+        .input-group input:hover {
             border-color: #AA002B;
             box-shadow: 0 0 8px rgba(170, 0, 43, 0.1);
         }
+
         button {
             background: linear-gradient(90deg, #AA002B, #FF0040);
             color: white;
