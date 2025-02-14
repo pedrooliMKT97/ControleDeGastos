@@ -143,24 +143,31 @@
             box-shadow: 0 4px 12px rgba(255, 68, 68, 0.3);
         }
 
-        /* Estilos para a foto de perfil */
+        /* Estilos para o avatar */
         .avatar-container {
             position: relative;
             width: 80px;
             height: 80px;
             margin: 0 auto 20px;
             cursor: pointer;
+            border-radius: 50%;
+            background: linear-gradient(45deg, #AA002B, #FF0040);
+            padding: 3px;
         }
-
-        .avatar {
+        .avatar-content {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid white;
+            background: white;
+            overflow: hidden;
+            position: relative;
             transition: all 0.3s ease;
         }
-
+        .avatar {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
         .avatar-overlay {
             position: absolute;
             top: 0;
@@ -177,15 +184,25 @@
             color: white;
             font-size: 12px;
         }
-
         .avatar-container:hover .avatar-overlay {
             opacity: 1;
         }
-
+        .avatar-container:hover .avatar-content {
+            transform: scale(0.95);
+        }
+        .avatar-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            fill: #AA002B;
+            opacity: 0.5;
+        }
         #uploadFoto {
             display: none;
         }
-
         @media (max-width: 480px) {
             .container {
                 padding: 10px;
@@ -206,9 +223,14 @@
         
         <!-- Avatar Container -->
         <div class="avatar-container" onclick="document.getElementById('uploadFoto').click()">
-            <img id="avatarImage" class="avatar" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=">
-            <div class="avatar-overlay">
-                Alterar Foto
+            <div class="avatar-content">
+                <img id="avatarImage" class="avatar">
+                <svg class="avatar-icon" id="defaultIcon" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                </svg>
+                <div class="avatar-overlay">
+                    Alterar Foto
+                </div>
             </div>
         </div>
         <input type="file" id="uploadFoto" accept="image/*">
@@ -258,25 +280,33 @@
             currency: 'BRL'
         });
 
-        let editIndex = -1; // Controlar edição
+        let editIndex = -1;
         let nomeUsuario = localStorage.getItem('nomeUsuario') || '';
         let salario = parseFloat(localStorage.getItem('salario')) || 0;
         let gastos = JSON.parse(localStorage.getItem('gastos')) || [];
 
-        // Carregar foto de perfil salva
-        const savedProfilePic = localStorage.getItem('profilePic');
-        if(savedProfilePic) {
-            document.getElementById('avatarImage').src = savedProfilePic;
+        // Sistema de Avatar
+        const avatarImage = document.getElementById('avatarImage');
+        const defaultIcon = document.getElementById('defaultIcon');
+
+        function carregarAvatar() {
+            const savedImage = localStorage.getItem('profilePic');
+            if(savedImage) {
+                avatarImage.src = savedImage;
+                defaultIcon.style.display = 'none';
+            } else {
+                avatarImage.src = '';
+                defaultIcon.style.display = 'block';
+            }
         }
 
-        // Função para upload de imagem
         document.getElementById('uploadFoto').addEventListener('change', function(e) {
             const file = e.target.files[0];
-            if (file) {
+            if(file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    document.getElementById('avatarImage').src = e.target.result;
                     localStorage.setItem('profilePic', e.target.result);
+                    carregarAvatar();
                 }
                 reader.readAsDataURL(file);
             }
@@ -285,6 +315,7 @@
         // Inicialização
         document.getElementById('nomeUsuario').value = nomeUsuario;
         document.getElementById('salario').value = salario;
+        carregarAvatar();
         atualizarSaldo();
         carregarGastos();
 
@@ -300,17 +331,10 @@
         }
 
         function atualizarSaldo() {
-            let totalGastos = gastos.reduce((total, gasto) => total + gasto.valor, 0);
-            let saldoDisponivel = salario - totalGastos;
+            const totalGastos = gastos.reduce((total, gasto) => total + gasto.valor, 0);
+            const saldoDisponivel = salario - totalGastos;
             document.getElementById('saldo').innerText = formatadorMoeda.format(saldoDisponivel);
-
-            // Mostrar alerta de saldo negativo
-            const alertaSaldo = document.getElementById('alertaSaldo');
-            if (saldoDisponivel < 0) {
-                alertaSaldo.style.display = 'block';
-            } else {
-                alertaSaldo.style.display = 'none';
-            }
+            document.getElementById('alertaSaldo').style.display = saldoDisponivel < 0 ? 'block' : 'none';
         }
 
         function adicionarGasto() {
@@ -318,9 +342,12 @@
             const valor = parseFloat(document.getElementById('valorGasto').value);
             const data = document.getElementById('dataGasto').value;
 
-            if (!validarCampos(nome, valor, data)) return;
+            if(!nome || isNaN(valor) || valor <= 0 || !data) {
+                alert("Preencha todos os campos corretamente!");
+                return;
+            }
 
-            if (editIndex === -1) {
+            if(editIndex === -1) {
                 gastos.push({ nome, valor, data });
             } else {
                 gastos[editIndex] = { nome, valor, data };
@@ -333,14 +360,6 @@
             carregarGastos();
             atualizarSaldo();
             limparCampos();
-        }
-
-        function validarCampos(nome, valor, data) {
-            if (nome === "" || isNaN(valor) || valor <= 0 || data === "") {
-                alert("Preencha todos os campos corretamente!");
-                return false;
-            }
-            return true;
         }
 
         function carregarGastos() {
@@ -360,7 +379,7 @@
         }
 
         function removerGasto(index) {
-            if (confirm("Deseja realmente excluir este gasto?")) {
+            if(confirm("Deseja realmente excluir este gasto?")) {
                 gastos.splice(index, 1);
                 localStorage.setItem('gastos', JSON.stringify(gastos));
                 carregarGastos();
@@ -392,11 +411,8 @@
         }
 
         function resetarTudo() {
-            if (confirm("Tem certeza que deseja resetar todas as informações? Isso não pode ser desfeito!")) {
-                localStorage.removeItem('nomeUsuario');
-                localStorage.removeItem('salario');
-                localStorage.removeItem('gastos');
-                localStorage.removeItem('profilePic');
+            if(confirm("Tem certeza que deseja resetar todas as informações?")) {
+                localStorage.clear();
                 location.reload();
             }
         }
