@@ -24,6 +24,11 @@
             border-radius: 10px;
             margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
         }
         .input-group {
             margin: 10px 0;
@@ -50,6 +55,10 @@
             border-color: #AA002B;
             outline: none;
             box-shadow: 0 0 5px rgba(170, 0, 43, 0.3);
+        }
+        input:not(.card input):hover {
+            border-color: #AA002B;
+            box-shadow: 0 0 8px rgba(170, 0, 43, 0.1);
         }
         button {
             background: linear-gradient(90deg, #AA002B, #FF0040);
@@ -86,6 +95,13 @@
         tr:hover td {
             background-color: #fff5f7;
         }
+        tr {
+            transition: transform 0.2s ease;
+        }
+        tr:hover {
+            transform: scale(1.02);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
         th {
             background-color: #AA002B;
             color: white;
@@ -95,11 +111,35 @@
             padding: 5px 10px;
             font-size: 12px;
         }
+        .actions button:first-child:hover {
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            transform: scale(1.1);
+        }
+        .actions button:last-child:hover {
+            background: linear-gradient(90deg, #dc3545, #bb2d3b);
+            transform: scale(1.1);
+        }
         .alerta-saldo {
             color: #ff4444;
             font-weight: bold;
             margin-top: 10px;
             display: none;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
+        }
+        button[onclick="resetarTudo()"] {
+            margin-top: 20px;
+            background: #ff4444;
+            transition: all 0.3s ease, transform 0.2s ease;
+        }
+        button[onclick="resetarTudo()"]:hover {
+            background: linear-gradient(90deg, #ff1a1a, #cc0000);
+            transform: scale(1.05) rotate(-2deg);
+            box-shadow: 0 4px 12px rgba(255, 68, 68, 0.3);
         }
         @media (max-width: 480px) {
             .container {
@@ -154,7 +194,7 @@
             </tbody>
         </table>
 
-        <button onclick="resetarTudo()" style="margin-top: 20px; background: #ff4444;">Resetar Tudo</button>
+        <button onclick="resetarTudo()">Resetar Tudo</button>
     </div>
     
     <script>
